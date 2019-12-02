@@ -4,14 +4,13 @@ open Fable.Core.JsInterop
 open Fable.React
 open Shared
 
-let DetailPage =
+let TournamentsPage =
     FunctionComponent.Of (
         (fun () -> div [] [
-                        h1 [] [str "DETAIL PAGE"]
-                        (*button [OnClick (fun _ -> Msg.Navigate Route.Root |> useDispatch() )] [str "Go Back to Home"]*)
+                        h1 [] [str "TournamentsPage"]
                         button [] [ A Route.Root [str "Go Back Home"] ]
                    ]
         )
-        , "DetailPage")
+        , "TournamentsPage")
     
-exportDefault DetailPage
+exportDefault TournamentsPage

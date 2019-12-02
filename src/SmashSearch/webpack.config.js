@@ -5,7 +5,13 @@ module.exports = {
     entry: "./src/App.fsx",
     output: {
         path: path.join(__dirname, "./public"),
-        filename: "bundle.js"
+        filename: "bundle.js",
+        chunkFilename: "[name].bundle.js"
+    },
+    optimization: {
+        splitChunks: {
+            chunks: "async"
+        }
     },
     devServer: {
         contentBase: path.join(__dirname, "./public"),

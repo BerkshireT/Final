@@ -14,6 +14,7 @@ module Routing =
     let private route =
         oneOf
             [ map Route.Root (s "")
+              map Route.Tournaments (s "tournaments" </> str)
               map Route.Detail (s "detail" </> i32) ]
     
     // Take a window.location object and return an option of Route
@@ -22,6 +23,7 @@ module Routing =
 let toRouteUrl route =
     match route with
     | Route.Root -> "/"
+    | Route.Tournaments location -> sprintf "/tournaments/%s" location
     | Route.Detail id -> sprintf "/detail/%d" id
  
 let urlUpdate (route: Route option) (model: Model) =
@@ -70,20 +72,31 @@ let suspense fallback children =
 
 let fallback =
     p [] [ i [ClassName "spin"; DangerouslySetInnerHTML { __html = "&orarr;" }] []
-           str "loading your page..." ]
+           str "Loading..." ]
 
 let layout page =
     div [] [
         h1 [] [str "Smash Search"]
-        h2 [] [
-                str "Location"
+        br []
+        h4 [] [
+                str "Enter Your Location or Click \"Locate Me\""
+                br []
+                br []
                 input [Type "text"; Id "locationInput"]
                 button [] [str "Locate Me"]
         ]
-        button [(*OnClick (fun _ ->  dispatch FindTournies)*)] [str "Search"]
+        button [ClassName "SearchButton"(*OnClick (fun _ ->  dispatch FindTournies)*)] [str "Search"]
         suspense fallback [page]
         footer [ClassName "footer"] [ str "CPS 452 (Fall 2019) Final Project by Tyler Berkshire" ]
     ]
+ 
+let HomePage props : ReactElement =
+    let homePage = ReactBindings.React.``lazy`` (fun () -> importDynamic "./HomePage.fsx")
+    ReactBindings.React.createElement(homePage, props, [])
+    
+let TournamentsPage props : ReactElement =
+    let tournamentsPage = ReactBindings.React.``lazy`` (fun () -> importDynamic "./TournamentsPage.fsx")
+    ReactBindings.React.createElement(tournamentsPage, props, [])
 
 let DetailPage props : ReactElement =
     let detailPage = ReactBindings.React.``lazy`` (fun () -> importDynamic "./DetailPage.fsx")
@@ -97,7 +110,8 @@ let App =
             fallback
         else
             match model.CurrentRoute with
-            | Some(Route.Root) -> h1 [] [str "HOME PAGE"]
+            | Some(Route.Root) -> HomePage()
+            | Some(Route.Tournaments _) -> TournamentsPage()
             | Some(Route.Detail _) -> DetailPage()
             | None -> h1 [] [str "404 - Page not found"]
         |> layout

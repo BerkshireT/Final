@@ -1,4 +1,4 @@
-﻿#load "../.paket/load/netstandard2.0/main.group.fsx"
+﻿#load "../.paket/load/main.group.fsx"
 
 open Fable.React
 open Fable.React.Props
@@ -7,8 +7,11 @@ open Browser.Types
 
 type Tournament = string
 
+type Location = string
+
 type Route =
     | Root
+    | Tournaments of Location
     | Detail of int
 
 type Msg =
