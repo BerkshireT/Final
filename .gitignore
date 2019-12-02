@@ -555,4 +555,4 @@ dist
 # TernJS port file
 .tern-port
 
-*/.paket/load/*
+src/SmashSearch/.paket/load
