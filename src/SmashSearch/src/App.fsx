@@ -1,4 +1,5 @@
 #load "Shared.fsx"
+#load "Helpers.fsx"
 
 open Fable.Core.JsInterop
 open Fable.React
@@ -6,8 +7,8 @@ open Fable.React.Props
 open Elmish
 open Elmish.React
 open Elmish.Navigation
-open Thoth.Json
 open Shared
+open Helpers
 
 module Routing =
     open Elmish.UrlParser
@@ -29,42 +30,30 @@ let toRouteUrl route =
 let urlUpdate (route: Route option) (model: Model) =
     { model with CurrentRoute = route }, Cmd.none
 
-let getTournaments (dispatch: Dispatch<Msg>) =
-    let decoder =
-        Decode.object (fun get ->
-            get.Required.Field "id" Decode.int, get.Required.Field "name" Decode.string)
-        |> Decode.array
-    
-    Fetch.fetch "/tournaments.json" []
-    |> Promise.bind (fun response -> response.text())
-    |> Promise.map (fun json ->
-        let result = Decode.fromString decoder json
-        match result with
-        | Ok tournaments ->
-            tournaments
-            |> Map.ofArray
-            |> Msg.TournamentsLoaded
-            |> dispatch
-        | Error err ->
-            printfn "%s" err)
-    |> Promise.catchEnd (fun ex ->
-        printfn "%A" ex)
-
 let init _ =
-    let model = { Tournaments = Map.empty
+    let model = { Tournaments = Array.empty
                   CurrentRoute = None
-                  IsLoadingTournaments = false }
+                  IsLoadingTournaments = false
+                  Location = "" }
     let route = Routing.parsePath Browser.Dom.document.location
-    let cmd = Cmd.ofSub getTournaments
-    let model', cmd' = urlUpdate route model
-    model', (Cmd.batch [cmd; cmd']) // Combine possible urlUpdate cmds with getTournaments
+    urlUpdate route model
 
 let update msg model =
     match msg with
     | Navigate route ->
         model, Elmish.Navigation.Navigation.newUrl (toRouteUrl route)
+    | ChangeLocation location ->
+        { model with Location = location }, Cmd.none
+    | GetTournaments ->
+        model,  Cmd.ofSub getTournaments
     | TournamentsLoaded tournaments ->
-        { model with Tournaments = tournaments }, Cmd.none
+        { model with Tournaments = tournaments
+                     IsLoadingTournaments = false
+        }, Cmd.ofMsg (Navigate (Route.Tournaments model.Location))
+    | FailedToLoad err ->
+        printfn "Error loading tournaments: %s" err
+        // TODO Update to add something to the model for the user to see something went wrong
+        model, Cmd.none
 
 let suspense fallback children =
     let props = createObj [ "fallback" ==> fallback ]
@@ -75,6 +64,8 @@ let fallback =
            str "Loading..." ]
 
 let layout page =
+    let model = useModel()
+    let dispatch = useDispatch()
     div [] [
         h1 [] [str "Smash Search"]
         br []
@@ -82,10 +73,15 @@ let layout page =
                 str "Enter Your Location or Click \"Locate Me\""
                 br []
                 br []
-                input [Type "text"; Id "locationInput"]
-                button [] [str "Locate Me"]
+                input [Type "text"
+                       //DefaultValue model.Location
+                       Value model.Location
+                       Placeholder "Latitude,Longitude"
+                       OnChange (fun ev -> Msg.ChangeLocation ev.Value |> dispatch)]
+                button [OnClick (fun _ ->  Msg.ChangeLocation ev.Value |> dispatch)] [str "Locate Me"]
+                // Add slider for radius
         ]
-        button [ClassName "SearchButton"(*OnClick (fun _ ->  dispatch FindTournies)*)] [str "Search"]
+        button [ClassName "SearchButton"; OnClick (fun _ ->  Msg.GetTournaments |> dispatch)] [str "Search"]
         suspense fallback [page]
         footer [ClassName "footer"] [ str "CPS 452 (Fall 2019) Final Project by Tyler Berkshire" ]
     ]

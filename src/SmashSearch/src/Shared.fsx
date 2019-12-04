@@ -5,7 +5,17 @@ open Fable.React.Props
 open Elmish
 open Browser.Types
 
-type Tournament = string
+//type Tournament = string
+
+type Tournament = {
+    id: int;
+    name: string;
+    city: string;
+    state: string;
+    startTime: int
+    address: string;
+    imageURL: string;
+}
 
 type Location = string
 
@@ -16,12 +26,16 @@ type Route =
 
 type Msg =
     | Navigate of Route
-    | TournamentsLoaded of Map<int,Tournament>
+    | ChangeLocation of Location
+    | GetTournaments
+    | TournamentsLoaded of array<(int * string * string * string * int * string * string)>
+    | FailedToLoad of string
 
 type Model =
     { CurrentRoute: Route option
-      Tournaments: Map<int, Tournament>
-      IsLoadingTournaments: bool }
+      Tournaments: array<(int * string * string * string * int * string * string)>
+      IsLoadingTournaments: bool
+      Location: Location }
 
 [<NoComparison>]
 type AppContext =

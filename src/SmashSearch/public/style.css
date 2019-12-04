@@ -25,6 +25,10 @@ h4 {
     margin-bottom: 1.5rem;
 }
 
+br {
+    line-height: 200%;
+}
+
 input {
     border-radius: 3px;
     margin: 0 0.5rem;

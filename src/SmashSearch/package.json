@@ -5,6 +5,7 @@
   },
   "dependencies": {
     "@babel/core": "^7.5.5",
+    "@react-native-community/geolocation": "^2.0.2",
     "fable-compiler": "^2.3.19",
     "fable-loader": "^2.1.8",
     "react": "^16.12.0",
