@@ -1,3 +1,14 @@
+//******************************************************************************
+//
+//      filename:  App.fsx
+//
+//      description:  Main App logic, routing, and base layout
+//
+//       author:  Berkshire, Tyler P.
+//
+//       Copyright (c) 2019 Tyler P Berkshire, University of Dayton
+//******************************************************************************
+
 #load "Shared.fsx"
 #load "Helpers.fsx"
 
@@ -35,6 +46,7 @@ let urlUpdate (route: Route option) (model: Model) =
     | _ ->
         { model with CurrentRoute = route }, Cmd.none
 
+/// Run on App startup
 let init _ =
     let model = { Tournaments = Array.empty
                   CurrentRoute = None
@@ -45,6 +57,7 @@ let init _ =
     let model', cmd' = urlUpdate route model
     model', Cmd.batch [cmd;cmd']
 
+/// Updates App when messages are passed
 let update msg model =
     match msg with
     | Navigate route ->
@@ -57,7 +70,6 @@ let update msg model =
         }, Cmd.none
     | FailedToLoad err ->
         printfn "Error loading tournaments: %s" err
-        // TODO Update to add something to the model for the user to see something went wrong
         model, Cmd.none
 
 let suspense fallback children =
@@ -68,24 +80,13 @@ let fallback =
     p [] [ i [ClassName "spin"; DangerouslySetInnerHTML { __html = "&orarr;" }] []
            str "Loading..." ]
 
+/// Overall page layout
 let layout page =
-    let model = useModel()
-    let dispatch = useDispatch()
     div [] [
         br []
         br []
         br []
         br []
-        (* h4 [] [
-                str "Enter Your Location or Click \"Locate Me\""
-                br []
-                br []
-                input [Type "text"
-                       Value model.Location
-                       Placeholder "Latitude,Longitude"
-                       OnChange (fun ev -> Msg.ChangeLocation ev.Value |> dispatch)]
-                button [OnClick (fun _ ->  Msg.ChangeLocation "" |> dispatch)] [str "Locate Me"]
-        ] *)
         suspense fallback [page]
     ]
  
@@ -101,6 +102,7 @@ let DetailPage props : ReactElement =
     let detailPage = ReactBindings.React.``lazy`` (fun () -> importDynamic "./DetailPage.fsx")
     ReactBindings.React.createElement(detailPage, props, [])
 
+/// Main App
 let App =
     FunctionComponent.Of (fun () ->
         let model = useModel()

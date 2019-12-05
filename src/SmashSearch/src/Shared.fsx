@@ -1,4 +1,15 @@
-﻿#load "../.paket/load/main.group.fsx"
+﻿//******************************************************************************
+//
+//      filename:  Shared.fsx
+//
+//      description:  Shared models, types, and wrappers
+//
+//       author:  Berkshire, Tyler P.
+//
+//       Copyright (c) 2019 Tyler P Berkshire, University of Dayton
+//******************************************************************************
+
+#load "../.paket/load/main.group.fsx"
 
 open Fable.React
 open Fable.React.Props
@@ -17,8 +28,6 @@ type Tournament = {
     primaryContact: string;
     events: array<(string * int)>
 }
-
-type Location = string
 
 type Route =
     | Root
@@ -57,7 +66,8 @@ type AProps =
     { Children: ReactElement seq;
       Route: Route }
  
-let A route children = // Wrapper for link elements
+ /// Wrapper for link elements
+let A route children =
     FunctionComponent.Of (
         fun (props: AProps) ->
             let dispatch = useDispatch()

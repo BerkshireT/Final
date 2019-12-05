@@ -1,6 +1,13 @@
-﻿open Thoth.Json
-open Thoth.Json
-open Thoth.Json
+﻿//******************************************************************************
+//
+//      filename:  Helpers.fsx
+//
+//      description:  Supporting functions
+//
+//       author:  Berkshire, Tyler P.
+//
+//       Copyright (c) 2019 Tyler P Berkshire, University of Dayton
+//******************************************************************************
 
 #load "Shared.fsx"
 
@@ -9,12 +16,24 @@ open Elmish
 open Shared
 open System
 
+/// Sort tournaments by nearest starting time
+let sortByUpcoming tournaments =
+    tournaments
+    |> Array.sortBy (fun (_, _, _, _, startTime, _, _, _, _, _) -> startTime)
+
+/// Sort tournaments by most recent
+let sortByPast tournaments =
+    tournaments
+    |> Array.sortBy (fun (_, _, _, _, startTime, _, _, _, _, _) -> startTime)
+    |> Array.rev
+
+/// Convert DateTime object to string
 let getDate startTime =
     let date = DateTimeOffset.FromUnixTimeSeconds(startTime).DateTime
     date.ToLongDateString()
 
+/// Decode JSON into an array of tournaments
 let getTournaments (dispatch: Dispatch<Msg>) =
-    // TODO: Regex to determine which API call to use
     let eventDecoder =
         Decode.object (fun get ->
             get.Required.Field "name" Decode.string,
@@ -50,30 +69,3 @@ let getTournaments (dispatch: Dispatch<Msg>) =
         Msg.FailedToLoad (ex.ToString())
        |> dispatch
     )
-(* Fable compiler does not implement System.Diagnostics fully
-    let proc = ProcessStartInfo(FileName = "Requests.py")
-    proc.Arguments <- "4 39.7420426,-50.1845668 50mi"
-    proc.RedirectStandardOutput <- true
-    proc.RedirectStandardError <- true
-    proc.UseShellExecute <- false
-    proc.WorkingDirectory <- Environment.CurrentDirectory
-    
-    let outputs = System.Collections.Generic.List<string>()
-    let errors = System.Collections.Generic.List<string>()
-    let outputHandler f (_sender:obj) (args:DataReceivedEventArgs) = f args.Data
-    let p = new Process(StartInfo = proc)
-    p.OutputDataReceived.AddHandler(DataReceivedEventHandler (outputHandler outputs.Add))
-    p.ErrorDataReceived.AddHandler(DataReceivedEventHandler (outputHandler errors.Add))
-    let started =
-      try
-            p.Start()
-      with | ex ->
-            ex.Data.Add("filename", "Requests.py")
-            reraise()
-    if not started then
-        failwithf "Failed to start process %s" "Requests.py"
-    p.BeginOutputReadLine()
-    p.WaitForExit()
-    p.Close()
-*)
-

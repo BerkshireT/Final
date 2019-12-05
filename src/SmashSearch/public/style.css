@@ -1,3 +1,16 @@
+/*
+//******************************************************************************
+//
+//      filename:  style.css
+//
+//      description:  CSS styling
+//
+//       author:  Berkshire, Tyler P.
+//
+//       Copyright (c) 2019 Tyler P Berkshire, University of Dayton
+//******************************************************************************
+*/
+
 /* Global */
 * {
     padding: 0;
@@ -137,9 +150,25 @@ button:active {
     padding: 10px 10px 20px;
 }
 
+.tournaments ul {
+    border: 1px solid black;
+}
+
 .tournaments li:hover {
     background: lightgreen;
     cursor: pointer;
+}
+
+.tournaments p {
+    font-size: 1.17em;
+}
+
+.tournaments span {
+    display: none;
+}
+
+.past {
+    margin-top: 20px;
 }
 
 .detail li {
@@ -166,7 +195,7 @@ button:active {
     padding-bottom: 5px;
 }
 
-.detail tr:nth-child(even) {
+.detail tr:nth-child(odd) {
     background-color: lightgreen;
 }
 
