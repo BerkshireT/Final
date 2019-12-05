@@ -15,7 +15,7 @@ module Routing =
     let private route =
         oneOf
             [ map Route.Root (s "")
-              map Route.Tournaments (s "tournaments" </> str)
+              map Route.Tournaments (s "tournaments")
               map Route.Detail (s "detail" </> i32) ]
     
     // Take a window.location object and return an option of Route
@@ -24,32 +24,37 @@ module Routing =
 let toRouteUrl route =
     match route with
     | Route.Root -> "/"
-    | Route.Tournaments location -> sprintf "/tournaments/%s" location
+    | Route.Tournaments -> "/tournaments"
     | Route.Detail id -> sprintf "/detail/%d" id
  
 let urlUpdate (route: Route option) (model: Model) =
-    { model with CurrentRoute = route }, Cmd.none
+    match route with
+    | Some(Route.Detail id) ->
+        { model with SelectedTournament = id
+                     CurrentRoute = route }, Cmd.none
+    | _ ->
+        { model with CurrentRoute = route }, Cmd.none
 
 let init _ =
     let model = { Tournaments = Array.empty
                   CurrentRoute = None
                   IsLoadingTournaments = false
-                  Location = "" }
+                  SelectedTournament = 0 }
     let route = Routing.parsePath Browser.Dom.document.location
-    urlUpdate route model
+    let cmd = Cmd.ofSub getTournaments
+    let model', cmd' = urlUpdate route model
+    model', Cmd.batch [cmd;cmd']
 
 let update msg model =
     match msg with
     | Navigate route ->
         model, Elmish.Navigation.Navigation.newUrl (toRouteUrl route)
-    | ChangeLocation location ->
-        { model with Location = location }, Cmd.none
     | GetTournaments ->
         model,  Cmd.ofSub getTournaments
     | TournamentsLoaded tournaments ->
         { model with Tournaments = tournaments
                      IsLoadingTournaments = false
-        }, Cmd.ofMsg (Navigate (Route.Tournaments model.Location))
+        }, Cmd.none
     | FailedToLoad err ->
         printfn "Error loading tournaments: %s" err
         // TODO Update to add something to the model for the user to see something went wrong
@@ -67,23 +72,21 @@ let layout page =
     let model = useModel()
     let dispatch = useDispatch()
     div [] [
-        h1 [] [str "Smash Search"]
         br []
-        h4 [] [
+        br []
+        br []
+        br []
+        (* h4 [] [
                 str "Enter Your Location or Click \"Locate Me\""
                 br []
                 br []
                 input [Type "text"
-                       //DefaultValue model.Location
                        Value model.Location
                        Placeholder "Latitude,Longitude"
                        OnChange (fun ev -> Msg.ChangeLocation ev.Value |> dispatch)]
-                button [OnClick (fun _ ->  Msg.ChangeLocation ev.Value |> dispatch)] [str "Locate Me"]
-                // Add slider for radius
-        ]
-        button [ClassName "SearchButton"; OnClick (fun _ ->  Msg.GetTournaments |> dispatch)] [str "Search"]
+                button [OnClick (fun _ ->  Msg.ChangeLocation "" |> dispatch)] [str "Locate Me"]
+        ] *)
         suspense fallback [page]
-        footer [ClassName "footer"] [ str "CPS 452 (Fall 2019) Final Project by Tyler Berkshire" ]
     ]
  
 let HomePage props : ReactElement =

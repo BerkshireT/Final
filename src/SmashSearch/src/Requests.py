@@ -20,7 +20,7 @@ query TournamentsByLocation($perPage: Int, $coordinates: String!, $radius: Strin
         distanceFrom: $coordinates,
         distance: $radius
       },
-      past: false
+      past: false,
       videogameIds: [
         1, 2, 3, 4, 5
       ]
@@ -35,6 +35,12 @@ query TournamentsByLocation($perPage: Int, $coordinates: String!, $radius: Strin
       venueAddress
       images(type: "profile") {
         url
+      }
+      slug
+      primaryContact
+      events {
+        name
+        numEntrants
       }
     }
   }
@@ -58,5 +64,13 @@ else:
         imageURL = tournie["images"][0]["url"]
         del tournie["images"]
         tournie.update({"imageURL" : imageURL})
+
+        if tournie["primaryContact"] is None:
+            tournie["primaryContact"] = "None"
+
+        for event in tournie["events"]:
+            if event["numEntrants"] is None:
+                event["numEntrants"] = 0
+
     f.write(json.dumps(resData["data"]["tournaments"]["nodes"]))
 f.close()

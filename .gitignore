@@ -560,4 +560,4 @@ src/SmashSearch/.paket/load
 src/SmashSerach/src/_pycache_
 *.pyc
 
-src.SmashSearch/public/tournaments.json
+src/SmashSearch/public/tournaments.json

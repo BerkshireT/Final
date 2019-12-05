@@ -10,10 +10,9 @@ let HomePage =
     FunctionComponent.Of (
         (fun () -> div [] [
                         h1 [] [str "HOME PAGE Goes here"]
-                        button [] [ A (Route.Detail 2) [str "Detail"] ]
                         br []
                         br []
-                        button [] [ A (Route.Tournaments "test") [str "Tournaments"] ]
+                        button [] [ A (Route.Tournaments) [str "Tournaments"] ]
                    ]
         )
         , "HomePage")

@@ -1,27 +1,37 @@
-﻿#load "Shared.fsx"
-
-open FSharp.Data
+﻿open Thoth.Json
 open Thoth.Json
-open System
-open System.Diagnostics
-open Elmish
-open Fable.Core
-open Shared
+open Thoth.Json
 
-//let dt =  DateTimeOffset.FromUnixTimeSeconds(unix)  //val dt : DateTimeOffset = 2017/02/28 4:01:31 +00:00
+#load "Shared.fsx"
+
+open Thoth.Json
+open Elmish
+open Shared
+open System
+
+let getDate startTime =
+    let date = DateTimeOffset.FromUnixTimeSeconds(startTime).DateTime
+    date.ToLongDateString()
 
 let getTournaments (dispatch: Dispatch<Msg>) =
     // TODO: Regex to determine which API call to use
-    
+    let eventDecoder =
+        Decode.object (fun get ->
+            get.Required.Field "name" Decode.string,
+            get.Required.Field "numEntrants" Decode.int)
+        |> Decode.array
     let decoder =
         Decode.object (fun get ->
             get.Required.Field "id" Decode.int,
             get.Required.Field "name" Decode.string,
             get.Required.Field "city" Decode.string,
             get.Required.Field "addrState" Decode.string,
-            get.Required.Field "startAt" Decode.int,
+            get.Required.Field "startAt" Decode.int64,
             get.Required.Field "venueAddress" Decode.string,
-            get.Required.Field "imageURL" Decode.string)
+            get.Required.Field "imageURL" Decode.string,
+            get.Required.Field "slug" Decode.string,
+            get.Required.Field "primaryContact" Decode.string,
+            get.Required.Field "events" eventDecoder)
         |> Decode.array
     
     Fetch.fetch "/tournaments.json" []
