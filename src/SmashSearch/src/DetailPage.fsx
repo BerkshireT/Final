@@ -45,19 +45,23 @@ let DetailPage =
                         br []
                         h3 [] [str name]
                         table [ClassName "detail"] [
-                            tr [ClassName "detail"] [
-                                td [] [str address]
-                            ]
-                            tr [ClassName "detail"] [
-                                td [] [str (getDate(startTime))]
-                            ]
-                            tr [ClassName "detail"] [
-                                td [] [str primaryContact]
+                            tbody [] [
+                                tr [ClassName "detail"] [
+                                    td [] [str address]
+                                ]
+                                tr [ClassName "detail"] [
+                                    td [] [str (getDate(startTime))]
+                                ]
+                                tr [ClassName "detail"] [
+                                    td [] [str primaryContact]
+                                ]
                             ]
                         ]
                         br []
                         h3 [] [str "Events"]
-                        table [ClassName "detail"] [ ofList events ]
+                        table [ClassName "detail"] [
+                            tbody [] [ ofList events ]
+                        ]
                         br []
                         button [] [
                             a [Href ("https://smash.gg/" + slug); Target "blank"] [str "View on Smash.gg"]

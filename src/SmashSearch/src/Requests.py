@@ -72,12 +72,19 @@ if 'errors' in resData:
 else:
     del resData['extensions']
     for tournie in resData["data"]["tournaments"]["nodes"] :
-        imageURL = tournie["images"][0]["url"]
+        try:
+            imageURL = tournie["images"][0]["url"]
+        except IndexError:
+            imageURL = "https://www.ssbwiki.com/images/c/c2/SmashBrosSymbol.svg"
+
         del tournie["images"]
         tournie.update({"imageURL" : imageURL})
 
         if tournie["primaryContact"] is None:
             tournie["primaryContact"] = "None"
+
+        if tournie["city"] is None:
+            tournie["city"] = "Unspecified"
 
         for event in tournie["events"]:
             if event["numEntrants"] is None:

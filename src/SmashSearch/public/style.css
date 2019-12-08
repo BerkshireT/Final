@@ -207,3 +207,9 @@ button:active {
 .back {
     margin-right: 20px;
 }
+
+.home img {
+    height: 100px;
+    width: 100px;
+    vertical-align: middle;
+}

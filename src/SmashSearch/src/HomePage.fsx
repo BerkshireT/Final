@@ -13,15 +13,16 @@
 
 open Fable.Core.JsInterop
 open Fable.React
+open Fable.React.Props
 open Shared
 
-// TODO I wanna add a brief overview of how this works to this page
-// TODO Link it to github and whatnot as well
-// TODO Update readme as well with pretty much the same info
 let HomePage =
     FunctionComponent.Of (
-        (fun () -> div [] [
-                        h1 [] [str "HOME PAGE Goes here"]
+        (fun () -> div [ClassName "home"] [
+                        img [ Src "./smashsearch.png";]
+                        br []
+                        br []
+                        h1 [] [str "Welcome to Super Smash Search!"]
                         br []
                         br []
                         button [] [ A (Route.Tournaments) [str "Tournaments"] ]

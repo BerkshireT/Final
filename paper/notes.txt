@@ -1,6 +1,0 @@
-Problem with building app in functional is that UIs are objects. This goes against functional thought.
-Solved by model view update (elmish, may now be what fabulous is)?
-
-model immutable history (continuations?) good for customer issues and reusing UI
-
-no race conditions with update functions (45 min)
