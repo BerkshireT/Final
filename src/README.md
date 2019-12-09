@@ -12,6 +12,8 @@ These instructions will get you a copy of the project up and running on your loc
 
 [.NET Core SDK 3.0.0](https://dotnet.microsoft.com/download) or greater
 
+[Node.js](https://nodejs.org/en/)
+
 [Python 3.7.0](https://www.python.org/downloads/) or greater
 
 Pip
