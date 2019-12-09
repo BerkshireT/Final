@@ -6,7 +6,7 @@
 #
 #      author:  Berkshire, Tyler P.
 #
-#      Copyright (c) 2019 Tyler P Berkshire, University of Dayton
+#      Copyright (c) 2019 Tyler P. Berkshire, University of Dayton
 # ******************************************************************************
 
 from graphqlclient import GraphQLClient, json

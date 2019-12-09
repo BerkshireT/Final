@@ -1,4 +1,4 @@
-# Super Smash Search
+# Smash Search
 
 This is a Super Smash Brothers tournament tracker which utilizes the [Fable](https://fable.io/)
 F# compiler, the [Elmish](https://elmish.github.io/elmish/) architecture,
@@ -40,7 +40,7 @@ Install the Python GraphQL Client package
 pip install graphqlclient
 ```
 
-Run paket install in the root directory of SuperSmashSearch
+Run paket install in the root directory of SmashSearch
 
 ```
 paket install
