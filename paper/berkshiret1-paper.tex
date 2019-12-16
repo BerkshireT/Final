@@ -34,7 +34,7 @@
 A worldwide tournament locator for one of Nintendo's popular video game series, \textit{Super Smash Brothers}, is implemented in the F$^{\sharp}$ programming language. The system is deployed as a web application and utilizes the Fable F$^{\sharp}$ compiler to convert the ecosystem into React and JavaScript elements. Our application is structured with the Elmish architecture's "model view update" style in mind and uses Webpack to bundle its modules. The tournament data is gathered from smash.gg's \textsc{GraphQL API} with \textsc{API} queries implemented in Python.
 \end{abstract}
 
-\keywords{Elmish, Fable compiler, F$^{\sharp}$ programming language, Python, React, Webpack}
+\keywords{Elmish, Fable compiler, F$^{\sharp}$ programming language, \textsc{GraphQL}, Python, React.}
 
 \maketitle
 
@@ -50,15 +50,15 @@ Thus, we chose to develop our application in the F$^{\sharp}$ programming langua
 
 \subsection{The Fable Compiler}
 
-The Fable compiler is a powerful tool which allows F$^{\sharp}$ to become a first-class citizen of the JavaScript environment. This means the functional programming paradigms of F$^{\sharp}$ can be fully utilized on the web. Pattern matching, in particular, is especially useful in the application's implementation as the Elmish architecture thrives off of message and data passing. This could cause problems in more complex systems, however, as pattern matching is often troublesome with abstract data types ~\cite{pattern}. The type safety and inference of F$^{\sharp}$ also allows for the user interface to be structurally sound while letting the code stay concise.
+The \textit{Fable} compiler is a powerful tool which allows F$^{\sharp}$ to become a first-class citizen of the JavaScript environment. This means the functional programming paradigms of F$^{\sharp}$ can be fully utilized on the web. Pattern matching, in particular, is especially useful in the application's implementation as the Elmish architecture thrives off of message and data passing. This could cause problems in more complex systems, however, as pattern matching is often troublesome with abstract data types ~\cite{pattern}. The type safety and inference of F$^{\sharp}$ also allows for the user interface to be structurally sound while letting the code stay concise.
 
 \subsection{The Elm and Elmish Architectures}
 
 \begin{figure}
 \includegraphics[height=2.5in, width=3in]{dispatchloop}
-\caption{The main Elmish dispatch loop.}\label{dispatchloop}\end{figure}
+\caption{The main Elmish dispatch loop. Figure re-generated and adapted from \url{https://elmish.github.io/elmish/}}\label{dispatchloop}\end{figure}
 
-Elmish is a package for Fable applications which enables the developer to utilize a ``model view update`` style of architecture. This style of application flow was popularized by the Elm Architecture for designing interactive programs. Elmish provides Fable with the core abstractions necessary to follow the Elm design style. This allows us to develop a solid core application that is largely UI-independent and easily reusable. 
+\textit{Elmish} is a package for Fable applications which enables the developer to utilize a ``model view update`` style of architecture. This style of application flow was popularized by the Elm Architecture for designing interactive programs. Elmish provides Fable with the core abstractions necessary to follow the Elm design style. This allows us to develop a solid core application that is largely UI-independent and easily reusable. 
 
 Figure~\ref{dispatchloop} shows the main dispatch loop for the Elmish architecture. The page is instantiated with an initial model which is rendered by the \texttt{View} function. Once the application catches an event trigger, it sends a message through the main program to the \texttt{Update} function. This, in turn, creates a new state for the application with any additional commands and sends it back to the program for an updated render.
 
@@ -91,7 +91,7 @@ Two of the most important features of React our application utilizes are functio
 
 Listing~\ref{component} shows an example of a function component. In this example, the main application component checks the internal state of the model. If the application is currently loading tournaments, then it renders a \texttt{fallback} component. Otherwise, the application will pattern match against the \textt{CurrentRoute} and load the appropriate page. This is piped into the \texttt{layout} function which defines the overall \textsc{UI} structure. The function component is utilized here to skip the rendering of a component if its props have not changed.
 
-\begin{lstlisting}[language=F#, caption=Function component example., label=component]
+\begin{lstlisting}[caption=Function component example., label=component, captionpos=b]
 let App =
     FunctionComponent.Of (fun () ->
         let model = useModel()
@@ -115,7 +115,7 @@ let App =
 
 The tournament data for the web application is collected through Python \textsc{GraphQL} queries to the smash.gg \textsc{API}. Listing~\ref{query} shows a simple \textsc{GraphQL} query.
 
-\begin{lstlisting}[language=Python, caption=Python \textsc{GraphQL} query example., label=query]
+\begin{lstlisting}[caption=Python \textsc{GraphQL} query example., label=query, captionpos=b]
 result = client.execute('''
 query TournamentsByLocation() {
   tournaments(query: {
@@ -133,8 +133,7 @@ query TournamentsByLocation() {
   }) {
     nodes {
       id
-      }
-}}}'''
+      }}}}'''
 \end{lstlisting}
 
 This query retrieves the \texttt{id} of up to ten tournaments at a maximum distance of fifty miles from 20$^{\circ}$ latitude and -81$^{\circ}$ longitude. In the actual application, more properties of the \texttt{tournament} object are retrieved and the following fields are parameterized: \texttt{perPage}, \texttt{coordinates}, and \texttt{radius}. Once this query is received, the Python script converts the \textsc{GraphQL} objects to a \textsc{JSON} format and writes them to a file. This is done once during the application's startup. 
@@ -157,9 +156,9 @@ We presented a F$^{\sharp}$ web application which displays the Super Smash Broth
 
 This project proved to be a good introduction into the functional paradigm for web development, but it lends itself to additional features. One such feature is the consolidation of the back-end and front-end processes. It would be beneficial to make the \textsc{GraphQL} queries from the F$^{\sharp}$ application instead of from a separate Python script. This would enable the user to input different locations during each session rather than having to recompile every time. Another feature is the option to sort tournaments by different fields. Currently, they are only sorted by date but giving the user the capability to sort by location, number of entrants, and game type would be helpful for larger data sets.
 
-\balance
-
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{berkshiret1-paper}
+
+\balance
 
 \end{document}
